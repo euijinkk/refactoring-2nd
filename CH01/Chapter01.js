@@ -39,16 +39,15 @@ export function statement(invoice, plays) {
   }
 
   for (let aPerformance of invoice.performances) {
-    const play = playFor(aPerformance);
-    let thisAmount = amountFor(aPerformance, play);
+    let thisAmount = amountFor(aPerformance, playFor(aPerformance));
 
     volumeCredits += Math.max(aPerformance.audience - 30, 0);
 
-    if ("comedy" === play.type) {
+    if ("comedy" === playFor(aPerformance).type) {
       volumeCredits += Math.floor(aPerformance.audience / 5);
     }
 
-    result += `${play.name} : ${format(thisAmount / 100)} (${
+    result += `${playFor(aPerformance).name} : ${format(thisAmount / 100)} (${
       aPerformance.audience
     }석)\n`;
     totalAmount += thisAmount;
