@@ -1,6 +1,5 @@
 export function statement(invoice, plays) {
   let result = `청구 내역 (고객명: ${invoice.customer})\n`;
-  let totalAmount = 0;
 
   for (let aPerformance of invoice.performances) {
     result += `${playFor(aPerformance).name} : ${usd(
@@ -8,6 +7,7 @@ export function statement(invoice, plays) {
     )} (${aPerformance.audience}석)\n`;
   }
 
+  let totalAmount = 0;
   for (let aPerformance of invoice.performances) {
     totalAmount += amountFor(aPerformance);
   }
