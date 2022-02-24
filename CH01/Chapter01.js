@@ -9,6 +9,21 @@ export function statement(invoice, plays) {
     minimumFractionDigits: 2,
   }).format;
 
+  for (let aPerformance of invoice.performances) {
+    let thisAmount = amountFor(aPerformance, playFor(aPerformance));
+
+    volumeCredits += volumeCreditsFor(aPerformance);
+
+    result += `${playFor(aPerformance).name} : ${format(thisAmount / 100)} (${
+      aPerformance.audience
+    }석)\n`;
+    totalAmount += thisAmount;
+  }
+
+  result += `총액 ${format(totalAmount / 100)}\n`;
+  result += `적립 포인트 ${volumeCredits}점`;
+  return result;
+
   function amountFor(aPerformance) {
     let thisAmount = 0;
 
@@ -38,22 +53,14 @@ export function statement(invoice, plays) {
     return plays[aPerformance.playID];
   }
 
-  for (let aPerformance of invoice.performances) {
-    let thisAmount = amountFor(aPerformance, playFor(aPerformance));
-
+  function volumeCreditsFor(aPerformance) {
+    let volumeCredits = 0;
     volumeCredits += Math.max(aPerformance.audience - 30, 0);
 
     if ("comedy" === playFor(aPerformance).type) {
       volumeCredits += Math.floor(aPerformance.audience / 5);
     }
 
-    result += `${playFor(aPerformance).name} : ${format(thisAmount / 100)} (${
-      aPerformance.audience
-    }석)\n`;
-    totalAmount += thisAmount;
+    return volumeCredits;
   }
-
-  result += `총액 ${format(totalAmount / 100)}\n`;
-  result += `적립 포인트 ${volumeCredits}점`;
-  return result;
 }
