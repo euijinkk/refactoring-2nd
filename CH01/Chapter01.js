@@ -3,26 +3,26 @@ export function statement(invoice, plays) {
   let volumeCredits = 0;
   let result = `청구 내역 (고객명: ${invoice.customer})\n`;
 
-  const format = new Intl.NumberFormat("es-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format;
-
   for (let aPerformance of invoice.performances) {
-    let thisAmount = amountFor(aPerformance, playFor(aPerformance));
-
     volumeCredits += volumeCreditsFor(aPerformance);
 
-    result += `${playFor(aPerformance).name} : ${format(thisAmount / 100)} (${
-      aPerformance.audience
-    }석)\n`;
-    totalAmount += thisAmount;
+    result += `${playFor(aPerformance).name} : ${usd(
+      amountFor(aPerformance)
+    )} (${aPerformance.audience}석)\n`;
+    totalAmount += amountFor(aPerformance);
   }
 
-  result += `총액 ${format(totalAmount / 100)}\n`;
+  result += `총액 ${usd(totalAmount)}\n`;
   result += `적립 포인트 ${volumeCredits}점`;
   return result;
+
+  function usd(aNumber) {
+    return new Intl.NumberFormat("es-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(aNumber / 100);
+  }
 
   function amountFor(aPerformance) {
     let thisAmount = 0;
