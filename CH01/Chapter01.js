@@ -1,4 +1,4 @@
-function statement(invoice, plays) {
+export function statement(invoice, plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `청구 내역 (고객명: ${invoice.customer})\n`;
@@ -16,17 +16,17 @@ function statement(invoice, plays) {
     switch (play.type) {
       case "tragedy":
         thisAmount = 40000;
-        if (audience > 30) {
-          thisAmount += 1000 * (audience - 30);
+        if (perf.audience > 30) {
+          thisAmount += 1000 * (perf.audience - 30);
         }
         break;
 
       case "comedy":
         thisAmount = 30000;
-        if (audience > 20) {
-          thisAmount += 10000 + 500 * (audience - 20);
+        if (perf.audience > 20) {
+          thisAmount += 10000 + 500 * (perf.audience - 20);
         }
-        thisAmount += 300 * audience;
+        thisAmount += 300 * perf.audience;
         break;
 
       default:
@@ -39,10 +39,10 @@ function statement(invoice, plays) {
       volumeCredits += Math.floor(perf.audience / 5);
     }
 
-    result += `${play.name} : ${format(thisAmount / 10)} (${
+    result += `${play.name} : ${format(thisAmount / 100)} (${
       perf.audience
     }석)\n`;
-    thisAmount += thisAmount;
+    totalAmount += thisAmount;
   }
 
   result += `총액 ${format(totalAmount / 100)}\n`;
