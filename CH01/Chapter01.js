@@ -9,10 +9,10 @@ export function statement(invoice, plays) {
     minimumFractionDigits: 2,
   }).format;
 
-  function amountFor(aPerformance, play) {
+  function amountFor(aPerformance) {
     let thisAmount = 0;
 
-    switch (play.type) {
+    switch (playFor(aPerformance).type) {
       case "tragedy":
         thisAmount = 40000;
         if (aPerformance.audience > 30) {
@@ -29,7 +29,7 @@ export function statement(invoice, plays) {
         break;
 
       default:
-        throw new Error(`알 수 없는 장르: ${type}`);
+        throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`);
     }
     return thisAmount;
   }
