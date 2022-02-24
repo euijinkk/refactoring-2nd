@@ -34,8 +34,12 @@ export function statement(invoice, plays) {
     return thisAmount;
   }
 
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
+  }
+
   for (let aPerformance of invoice.performances) {
-    const play = plays[aPerformance.playID];
+    const play = playFor(aPerformance);
     let thisAmount = amountFor(aPerformance, play);
 
     volumeCredits += Math.max(aPerformance.audience - 30, 0);
