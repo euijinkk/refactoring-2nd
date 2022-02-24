@@ -9,38 +9,43 @@ export function statement(invoice, plays) {
     minimumFractionDigits: 2,
   }).format;
 
-  for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
+  function amountFor(aPerformance, play) {
     let thisAmount = 0;
 
     switch (play.type) {
       case "tragedy":
         thisAmount = 40000;
-        if (perf.audience > 30) {
-          thisAmount += 1000 * (perf.audience - 30);
+        if (aPerformance.audience > 30) {
+          thisAmount += 1000 * (aPerformance.audience - 30);
         }
         break;
 
       case "comedy":
         thisAmount = 30000;
-        if (perf.audience > 20) {
-          thisAmount += 10000 + 500 * (perf.audience - 20);
+        if (aPerformance.audience > 20) {
+          thisAmount += 10000 + 500 * (aPerformance.audience - 20);
         }
-        thisAmount += 300 * perf.audience;
+        thisAmount += 300 * aPerformance.audience;
         break;
 
       default:
         throw new Error(`알 수 없는 장르: ${type}`);
     }
+    return thisAmount;
+  }
 
-    volumeCredits += Math.max(perf.audience - 30, 0);
+  for (let aPerformance of invoice.performances) {
+    const play = plays[aPerformance.playID];
+    let thisAmount = amountFor(aPerformance, play);
+
+    volumeCredits += Math.max(aPerformance.audience - 30, 0);
 
     if ("comedy" === play.type) {
-      volumeCredits += Math.floor(perf.audience / 5);
+      volumeCredits += Math.floor(aPerformance.audience / 5);
     }
 
     result += `${play.name} : ${format(thisAmount / 100)} (${
-      perf.audience
+      aPerformance.audience
     }석)\n`;
     totalAmount += thisAmount;
   }
