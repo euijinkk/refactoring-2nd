@@ -7,14 +7,19 @@ export function statement(invoice, plays) {
     )} (${aPerformance.audience}석)\n`;
   }
 
-  let totalAmount = 0;
-  for (let aPerformance of invoice.performances) {
-    totalAmount += amountFor(aPerformance);
-  }
+  let totalAmount = totalAmount();
 
   result += `총액 ${usd(totalAmount)}\n`;
   result += `적립 포인트 ${totalVolumeCredits()}점`;
   return result;
+
+  function totalAmount() {
+    let totalAmount = 0;
+    for (let aPerformance of invoice.performances) {
+      totalAmount += amountFor(aPerformance);
+    }
+    return totalAmount;
+  }
 
   function totalVolumeCredits() {
     let volumeCredits = 0;
