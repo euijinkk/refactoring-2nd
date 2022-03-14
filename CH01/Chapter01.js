@@ -10,6 +10,11 @@ export function statement(invoice, plays) {
     return result;
   });
 
+  statementData.totalAmount = totalAmount(statementData);
+  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+
+  return renderPlainText(statementData, invoice, plays);
+
   function playFor(aPerformance) {
     return plays[aPerformance.playID];
   }
@@ -50,23 +55,7 @@ export function statement(invoice, plays) {
     return volumeCredits;
   }
 
-  return renderPlainText(statementData, invoice, plays);
-}
-
-function renderPlainText(data, invoice) {
-  let result = `청구 내역 (고객명: ${invoice.customer})\n`;
-
-  for (let aPerformance of data.performances) {
-    result += `${aPerformance.play.name} : ${usd(aPerformance.amount)} (${
-      aPerformance.audience
-    }석)\n`;
-  }
-
-  result += `총액 ${usd(totalAmount())}\n`;
-  result += `적립 포인트 ${totalVolumeCredits()}점`;
-  return result;
-
-  function totalAmount() {
+  function totalAmount(data) {
     let result = 0;
     for (let aPerformance of data.performances) {
       result += aPerformance.amount;
@@ -74,13 +63,27 @@ function renderPlainText(data, invoice) {
     return result;
   }
 
-  function totalVolumeCredits() {
+  function totalVolumeCredits(data) {
     let result = 0;
     for (let aPerformance of data.performances) {
       result += aPerformance.volumeCredits;
     }
     return result;
   }
+}
+
+function renderPlainText(data) {
+  let result = `청구 내역 (고객명: ${data.customer})\n`;
+
+  for (let aPerformance of data.performances) {
+    result += `${aPerformance.play.name} : ${usd(aPerformance.amount)} (${
+      aPerformance.audience
+    }석)\n`;
+  }
+
+  result += `총액 ${usd(data.totalAmount)}\n`;
+  result += `적립 포인트 ${data.totalVolumeCredits}점`;
+  return result;
 
   function usd(aNumber) {
     return new Intl.NumberFormat("es-US", {
