@@ -1,4 +1,4 @@
-import { statement } from "../Chapter01";
+import { statement } from "../statement";
 import invoicesJson from "../invoices.json";
 import playsJson from "../plays.json";
 
