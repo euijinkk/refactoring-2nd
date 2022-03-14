@@ -1,53 +1,16 @@
 export function statement(invoice, plays) {
   const statementData = {};
   statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances.map((aPerformance) => ({
-    ...aPerformance,
-    play: playFor(aPerformance),
-  }));
+  statementData.performances = invoice.performances.map((aPerformance) => {
+    const result = { ...aPerformance };
+    result.play = playFor(result);
+    result.amount = amountFor(result);
+
+    return result;
+  });
 
   function playFor(aPerformance) {
     return plays[aPerformance.playID];
-  }
-
-  return renderPlainText(statementData, invoice, plays);
-}
-
-function renderPlainText(data, invoice, plays) {
-  let result = `청구 내역 (고객명: ${invoice.customer})\n`;
-
-  for (let aPerformance of data.performances) {
-    result += `${aPerformance.play.name} : ${usd(amountFor(aPerformance))} (${
-      aPerformance.audience
-    }석)\n`;
-  }
-
-  result += `총액 ${usd(totalAmount())}\n`;
-  result += `적립 포인트 ${totalVolumeCredits()}점`;
-  return result;
-
-  function totalAmount() {
-    let result = 0;
-    for (let aPerformance of data.performances) {
-      result += amountFor(aPerformance);
-    }
-    return result;
-  }
-
-  function totalVolumeCredits() {
-    let volumeCredits = 0;
-    for (let aPerformance of data.performances) {
-      volumeCredits += volumeCreditsFor(aPerformance);
-    }
-    return volumeCredits;
-  }
-
-  function usd(aNumber) {
-    return new Intl.NumberFormat("es-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(aNumber / 100);
   }
 
   function amountFor(aPerformance) {
@@ -73,6 +36,46 @@ function renderPlainText(data, invoice, plays) {
         throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`);
     }
     return thisAmount;
+  }
+
+  return renderPlainText(statementData, invoice, plays);
+}
+
+function renderPlainText(data, invoice) {
+  let result = `청구 내역 (고객명: ${invoice.customer})\n`;
+
+  for (let aPerformance of data.performances) {
+    result += `${aPerformance.play.name} : ${usd(aPerformance.amount)} (${
+      aPerformance.audience
+    }석)\n`;
+  }
+
+  result += `총액 ${usd(totalAmount())}\n`;
+  result += `적립 포인트 ${totalVolumeCredits()}점`;
+  return result;
+
+  function totalAmount() {
+    let result = 0;
+    for (let aPerformance of data.performances) {
+      result += aPerformance.amount;
+    }
+    return result;
+  }
+
+  function totalVolumeCredits() {
+    let volumeCredits = 0;
+    for (let aPerformance of data.performances) {
+      volumeCredits += volumeCreditsFor(aPerformance);
+    }
+    return volumeCredits;
+  }
+
+  function usd(aNumber) {
+    return new Intl.NumberFormat("es-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(aNumber / 100);
   }
 
   function volumeCreditsFor(aPerformance) {
