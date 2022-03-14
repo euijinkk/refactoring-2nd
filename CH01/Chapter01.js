@@ -56,19 +56,11 @@ export function statement(invoice, plays) {
   }
 
   function totalAmount(data) {
-    let result = 0;
-    for (let aPerformance of data.performances) {
-      result += aPerformance.amount;
-    }
-    return result;
+    return data.performances.reduce((acc, cur) => acc + cur.amount, 0);
   }
 
   function totalVolumeCredits(data) {
-    let result = 0;
-    for (let aPerformance of data.performances) {
-      result += aPerformance.volumeCredits;
-    }
-    return result;
+    return data.performances.reduce((acc, cur) => acc + cur.volumeCredits, 0);
   }
 }
 
